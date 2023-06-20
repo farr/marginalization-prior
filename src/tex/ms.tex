@@ -1,56 +1,83 @@
 % Define document class
-\documentclass[twocolumn]{aastex631}
+\documentclass[modern]{aastex631}
 \usepackage{showyourwork}
+
+\newcommand{\CCA}{Center for Computational Astrophysics, Flatiron Institute, New York NY 10010, USA}
+\newcommand{\StonyBrook}{Department of Physics and Astronomy, Stony Brook University, Stony Brook NY 11794, USA}
 
 % Begin!
 \begin{document}
 
 % Title
-\title{An open source scientific article}
+\title{A Useful Prior for Polarization Quadratures}
 
 % Author list
-\author{@farr}
+\author{Max Isi}
+\email{misi@flatironinstitute.org}
+\affiliation{\CCA}
+
+\author{Will M. Farr}
+\email{wfarr@flatironinstitute.org}
+\email{will.farr@stonybrook.edu}
+\affiliation{\CCA}
+\affiliation{\StonyBrook}
+
 
 % Abstract with filler text
 \begin{abstract}
-    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-    Ut purus elit, vestibulum ut, placerat ac, adipiscing vitae, felis.
-    Curabitur dictum gravida mauris, consectetuer id, vulputate a, magna.
-    Donec vehicula augue eu neque, morbi tristique senectus et netus et.
-    Mauris ut leo, cras viverra metus rhoncus sem, nulla et lectus vestibulum.
-    Phasellus eu tellus sit amet tortor gravida placerat.
-    Integer sapien est, iaculis in, pretium quis, viverra ac, nunc.
-    Praesent eget sem vel leo ultrices bibendum.
-    Aenean faucibus, morbi dolor nulla, malesuada eu, pulvinar at, mollis ac.
-    Curabitur auctor semper nulla donec varius orci eget risus.
-    Duis nibh mi, congue eu, accumsan eleifend, sagittis quis, diam.
-    Duis eget orci sit amet orci dignissim rutrum.
+    We say something about marginalization of quadratures with a Gaussian
+    likelihood and a prior that is conditionally Gaussian but marginally flat
+    (or any other shape desired).
 \end{abstract}
 
 % Main body with filler text
 \section{Introduction}
 \label{sec:intro}
 
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-Ut purus elit, vestibulum ut, placerat ac, adipiscing vitae, felis.
-Curabitur dictum gravida mauris, consectetuer id, vulputate a, magna.
-Donec vehicula augue eu neque, morbi tristique senectus et netus et.
-Mauris ut leo, cras viverra metus rhoncus sem, nulla et lectus vestibulum.
-Phasellus eu tellus sit amet tortor gravida placerat.
-Integer sapien est, iaculis in, pretium quis, viverra ac, nunc.
-Praesent eget sem vel leo ultrices bibendum.
-Aenean faucibus, morbi dolor nulla, malesuada eu, pulvinar at, mollis ac.
-Curabitur auctor semper nulla donec varius orci eget risus.
-Duis nibh mi, congue eu, accumsan eleifend, sagittis quis, diam.
-Duis eget orci sit amet orci dignissim rutrum.
+Quadrature introduction, should probably introduce via \citet{Isi2022}.  
 
-Nam dui ligula, fringilla a, euismod sodales, sollici- tudin vel, wisi.
-Morbi auctor lorem non justo, nam lacus libero, pretium at, lobortis vitae.
-Donec aliquet, tortor sed accumsan bibendum, erat ligula aliquet magna.
-Morbi ac orci et nisl hendrerit mollis, suspendisse ut massa, cras nec ante.
-Pellentesque a nulla cum sociis natoque penatibus et magnis dis parturient.
-Aliquam tincidunt urna, nulla ullamcorper vestibulum turpis.
-Pellentesque cursus luctus mauris \citep{Luger2021}.
+Because it makes analytical marginalization over quadratures easy
+\citep{Hogg2020}, we often want to impose an isotropic Gaussian prior over
+polarization quadratures with some scale parameter $A_0$:
+\begin{equation}
+    \label{eq:quadrature-prior}
+    \mathbf{a} \sim N\left[ 0, a_0 \mathbf{I} \right].
+\end{equation}
+At fixed scale, however, this induces a prior on the amplitude $a \equiv \left|
+\mathbf{a} \right|$ that has a power-law behavior as $a \to 0$:
+\begin{equation}
+    p\left( a \mid a_0 \right) = \frac{a^{n-1}}{2^{n/2-1} \Gamma\left(\frac{n}{2} \right) a_0^n} \exp\left[ -\frac{a^2}{2 a_0^2} \right],
+\end{equation}
+where $n$ is the number of quadrature components (i.e.\ $n = 4$ for
+electromagnetic radiation or gravitational radiation in general relativity with
+a sine and cosine quadrature for each of two polarizations in each Fourier
+mode).
+
+If we are trying to assess the presence of a mode this prior is inconvenient
+because it places zero weight on $a = 0$ (i.e.\ the absence of the mode).  This
+is purely a ``volume'' effect, arising from the fact that the multivariate
+Gaussian prior in Eq.\ \eqref{eq:quadrature-prior} places finite weight at the
+origin.  
+
+If we promote $a_0$ to a parameter, with prior $p\left( a_0 \right)$ and use the
+$n$ measurements---the components of $\mathbf{a}$---to constrain it, then by
+tuning the prior on $a_0$ we can control the marginal prior on $a$.  To induce,
+for example, a flat prior on $a$ as $a \to 0$, let the prior on $a_0$ be flat up
+to some maximum (quadrature) scale $a_\mathrm{max}$.  Then 
+\begin{equation}
+    p\left( a, a_0 \right) = p\left( a \mid a_0 \right) p\left( a_0 \right) = \frac{a^{n-1}}{2^{n/2-1} \Gamma\left(\frac{n}{2} \right) a_0^n a_\mathrm{max}} \exp\left[ -\frac{a^2}{2 a_0^2} \right]
+\end{equation}
+induces a marginal prior on $a$ that is 
+\begin{equation}
+    p\left( a \right) \equiv \int \mathrm{d} a_0 \, p\left( a, a_0 \right) = \frac{\Gamma\left( \frac{n - 1}{2}, \frac{a^2}{2 a_\mathrm{max}^2} \right)}{a_\mathrm{max} \sqrt{2} \Gamma\left( \frac{n}{2} \right)} = \mathrm{const} + \mathcal{O}\left( \frac{a}{a_\mathrm{max}} \right)^{n-1}
+\end{equation}
+
+\begin{figure}
+    \includegraphics{figures/prior_plot.pdf}
+    \caption{The prior as a function of $n$.}
+    \label{fig:prior}
+    \script{prior_plot.py}
+\end{figure}
 
 \bibliography{bib}
 
